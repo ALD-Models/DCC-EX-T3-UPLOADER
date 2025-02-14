@@ -1,5 +1,5 @@
 {
-    "name": "Signal Controller",
+    "name": "T3-Wifi Main",
     "version": "0.1.1",
     "new_install_prompt_erase": true,
     "builds": [
