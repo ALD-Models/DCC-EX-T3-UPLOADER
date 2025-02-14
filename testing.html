@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>T3-Wifi Installer</title>
+<meta name="description" content="Easily streamline uploads for your DCC-EX Controller with a user-friendly interface.">
+<meta name="keywords" content="DCC, T3-WIFI, DCC-EX, ESP32, Controller, DCC Contoller, Web Upload Tool, T3 Firmware, Firmware Installer">
+<meta name="author" content="Jake Lofthouse">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:title" content="T3-Wifi Installer">
+<meta property="og:description" content="Simplify Prusa ESP CAM uploads with an intuitive and reliable web upload tool.">
+<meta property="og:url" content="https://ald-models.github.io/DCC-EX-T3-UPLOADER/">
+<meta property="og:locale" content="en_GB">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<style>
+    body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        background-color: #666D75;
+    }
+    #container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+    #rounded-box {
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        width: 90%;
+        max-width: 600px;
+    }
+    .help-button {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        background-color: #ff7b15;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        font-size: 20px;
+        cursor: pointer;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .help-button:hover {
+        transform: scale(1.1);
+    }
+    .main-link {
+        margin-top: 20px;
+        display: block;
+        color: #ff7b15;
+        font-weight: bold;
+        text-decoration: none;
+    }
+</style>
+</head>
+<body>
+    <button class="help-button" onclick="window.location.href='https://github.com/ALD-Models/DCC-EX-T3-UPLOADER/blob/main/README.md'">
+        <i class="fas fa-question"></i>
+    </button>
+    <div id="container">
+        <div id="rounded-box">
+            <h1>T3-Wifi Installer</h1>
+            <esp-web-install-button id="installButton" manifest="webflash/manifest.json"></esp-web-install-button>
+            <br>
+            <a href="https://github.com/DCC-EX/EX-T3-WiFi" class="main-link">View Main Code Repository</a>
+        </div>
+    </div>
+    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="JLofthouse" data-description="Support me on Buy me a coffee!" data-message="" data-color="#ff7b15" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body>
+</html>
