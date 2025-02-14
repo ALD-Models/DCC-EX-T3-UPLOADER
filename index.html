@@ -1,12 +1,23 @@
 <!DOCTYPE html>
 <html>
-
+<html lang="en">
 <head>
-    <title>Firmware Updater</title>
-    <meta name="description" content="ALD Models Firmware Updater">
-    <meta name="keywords" content="wifi remote control, radio control, railway, narrow gauge, SM32, 16mm, G scale, garden railway, ALD Models, Firmware Update">
-    <meta name="abstract" content="Updater for ALD Models Electronic Products">
-    <meta property="og:type" content="website" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Easily streamline uploads for your Prusa ESP CAM device with a user-friendly interface.">
+<meta name="keywords" content="Prusa, Prusa ESP32, ESP32, ESP32 CAM, Prusa Camera, Camera Upload, Web Upload Tool, Prusa Firmware, Firmware Installer, ESP CAM Uploader">
+<meta name="author" content="Jake Lofthouse">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Prusa Cam Installer">
+<meta property="og:description" content="Simplify Prusa ESP CAM uploads with an intuitive and reliable web upload tool.">
+<meta property="og:url" content="https://ald-models.github.io/Prusa-ESP32-Cam-Web-Upload/">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:title" content="Prusa Cam Installer">
+<meta name="twitter:description" content="Easily streamline Prusa ESP CAM uploads with our intuitive web tool.">
+<title>Prusa Cam Installer</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="shortcut icon" type="image/x.icon" href="favicon.ico?">
     <style>
         body {
@@ -16,11 +27,13 @@
             padding: 0;
             background-color: #161819ff;
             overflow: hidden;
+            background: url('background.jpg') no-repeat center center fixed; /* Fixed background image */
+            background-size: cover;
         }
 
         :root {
             /* Colors */
-            --esp-tools-button-color: #25555C;
+            --esp-tools-button-color: #ff7b15;
         }
 
         #container {
@@ -29,18 +42,13 @@
             align-items: center;
             height: 100vh;
         }
-        
-        #uiCopyright {
-            position: fixed;
-            bottom: 10px;
-            left: 10px;
-            font-size: 14px;
-            color: #666;
-        }
 
         #rounded-box-container {
             display: flex;
             justify-content: center;
+            width: 90%; /* Adjust the width as needed */
+            max-width: 600px; /* Limit the maximum width */
+            margin: auto;
         }
 
         #rounded-box {
@@ -50,6 +58,7 @@
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
             position: relative;
             z-index: 1;
+            width: 100%;
         }
 
         h1 {
@@ -66,42 +75,75 @@
         }
 
         #logo img {
-            max-width: 15%;
+            max-width: 20%; /* Make the logo slightly larger */
             height: auto;
-            border-radius: 20px;
+            /* Remove border-radius */
+        }
+        
+    /* Loading overlay styles */
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #fff; /* Set the loading overlay to solid white */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999; /* Ensure the loading overlay is on top of everything */
+    }
+
+    .progress-container {
+        width: 200px;
+        height: 20px;
+        border: 1px solid #ff7b15;
+        position: relative;
+        overflow: hidden;
+        background-color: #ff7b15; /* Set progress bar color to black */
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 100%;
+        background-color: #fff;
+        position: absolute;
+        top: 0;
+        left: -100%;
+        animation: progress-animation 2s linear infinite;
+    }
+    
+    ewt-install-dialog, ewt-no-port-picked-dialog {
+            --mdc-theme-primary: #ff7b15;
+            --esp-tools-button-color: #ff7b15;
+            --esp-tools-button-text-color: #ff7b15;
+            --mdc-text-field-fill-color: #ff7b15;
         }
 
-        /* Background Animation */
-        body::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, #ff0080, #8000ff);
-            background-size: 200% 200%;
-            animation: gradient 5s linear infinite;
+
+    @keyframes progress-animation {
+        0% {
+            left: -100%;
         }
-
-        @keyframes gradient {
-            0% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-
-            100% {
-                background-position: 0% 50%;
-            }
+        100% {
+            left: 100%;
         }
+    }
+
+    .loading-text {
+        font-size: 24px;
+        color: #ff7b15;
+        font-family: 'Arial', sans-serif; /* Set font to 'Arial', sans-serif */
+        margin-bottom: 10px;
+    }
 
         .button {
             display: inline-block;
             border: none;
-            background-color: #25555C;
+            background-color: var(--esp-tools-button-color);
             color: #FFFFFF;
             text-align: center;
             font-size: 15px;
@@ -141,37 +183,83 @@
 
         .powered-by {
             font-size: 12px;
-            color: #25555C; /* Set text color to button color */
+            color: var(--esp-tools-button-color); /* Set text color to button color */
             cursor: pointer;
             text-decoration: underline;
             margin-top: 20px; /* Add margin to the top */
+            display: inline-block; /* Display as inline block */
+            padding: 5px; /* Add padding */
+            /* Remove border-radius */
+            transition: color 0.5s; /* Add transition effect for color change */
+        }
+
+        .powered-by:hover {
+            color: #ffb874; /* Change text color on hover to a lighter shade of orange */
+        }
+        
+          .help-button {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 999; /* Ensure it's above other content */
+            background-color: #ff7b15; /* Button color */
+            color: white;
+            border: none;
+            border-radius: 50%; /* Make it round */
+            width: 60px;
+            height: 60px;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); /* Add shadow */
+            transition: transform 0.3s ease; /* Add smooth animation */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Change button style on hover */
+        .help-button:hover {
+            transform: scale(1.1); /* Scale it up */
+        }
+
+        /* Add styles for button icon */
+        .help-button i {
+            position: relative;
         }
     </style>
 </head>
+
 <body>
     
- <div id="uiCopyright">
-        &copy; <span id="copyrightYear"></span> Jake Lofthouse ALD Models |
-        <a href="https://www.aldmodels.co.uk" target="_blank">www.aldmodels.co.uk</a>
+    <!-- Help button with icon -->
+    <button class="help-button" onclick="window.location.href='https://github.com/ALD-Models/Prusa-ESP32-Cam-Web-Upload/blob/main/README.md'">
+        <i class="fas fa-question"></i> <!-- Font Awesome help icon -->
+    </button>
+    
+    <!-- Loading overlay -->
+    <div class="loading-overlay">
+        <div class="loading-text">Loading</div>
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+        </div>
     </div>
     
     <div id="container">
         <div id="rounded-box-container">
             <div id="rounded-box">
                 <div id="logo">
-                    <img src="https://img1.wsimg.com/isteam/ip/bbde3b1b-93a1-4e79-ba26-9f4d2c23fffb/ALD%20Models%20Logo%202020.jpg"
-                        alt="ALD Models Logo">
+                    <img src="logo.png" alt="Logo"> <!-- Update the logo source here -->
                 </div>
-                <h1>Firmware Updater</h1>
+                <h1>Prusa Cam Installer</h1>
                 <div id="main">
-                    <script type="module" src="https://unpkg.com/esp-web-tools@7.3.1/dist/web/install-button.js?module"></script>
+                    <script
+  type="module"
+  src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"
+></script>
                     <esp-web-install-button id="installButton" manifest="webflash/manifest.json"></esp-web-install-button>
                     <br>
                     <br>
-                    <a class="button" style="vertical-align: middle" href="http://www.aldmodels.co.uk"><span>Visit our website</span></a>
-                    <br>
-                    <span id="noteSpan">NOTE: Make sure to close anything using your device's com port (e.g. Serial
-                        monitor)</span>
+                    <span id="noteSpan">NOTE: Make sure to close anything using your device's com port (e.g. Serial monitor)</span>
                 </div>
                 <div class="powered-by" onclick="window.open('https://esphome.github.io/esp-web-tools/', '_blank')">Powered by ESP Web Tools</div>
             </div>
@@ -179,26 +267,49 @@
     </div>
        
     <script>
-        // Function to get the current year
-        function getCurrentYear() {
-            return new Date().getFullYear();
-        }
-
-        // Function to update the copyright year
-        function updateCopyrightYear() {
-            document.getElementById('copyrightYear').textContent = getCurrentYear();
-        }
-
-        // Call the function to update the copyright year
-        updateCopyrightYear();
-        
         if ("serial" in navigator) {
             document.getElementById("notSupported").style.display = 'none';
             document.getElementById("main").style.display = 'block';
         } else {
-            window.location.href = "https://ald-models.github.io/Firmware/Not_Supported";
+            window.location.href = "https://ald-models.github.io/Prusa-ESP32-Cam-Web-Upload/Not_Supported";
         }
+        
     </script>
+    
+    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="JLofthouse" data-description="Support me on Buy me a coffee!" data-message="" data-color="#FF813F" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+
+...
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5VTXMS502E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-5VTXMS502E');
+
+  // Hide the loading overlay when the page is fully loaded
+  window.addEventListener('load', function() {
+      var loadingOverlay = document.querySelector('.loading-overlay');
+      loadingOverlay.style.display = 'none';
+  });
+
+  // Clear cache when the page is closed
+  window.addEventListener('beforeunload', function() {
+      if ('caches' in window) {
+          caches.keys().then(function(cacheNames) {
+              cacheNames.forEach(function(cacheName) {
+                  caches.delete(cacheName);
+              });
+          });
+      }
+  });
+</script>
+</body>
+</html>
+
+        });
+</script>
 </body>
 
 </html>
